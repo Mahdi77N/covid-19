@@ -119,10 +119,10 @@ def clean_data(data, numberOfSelectedCounties, spatial_mode):
     data = data.sort_values(by=['county_fips', 'date of day t'])
     # select the number of counties we want to use
     # numberOfSelectedCounties = numberOfCounties
-    if numberOfSelectedCounties == -1:
-        numberOfSelectedCounties = len(data['county_fips'].unique())
+    # if numberOfSelectedCounties == -1:
+    #     numberOfSelectedCounties = len(data['county_fips'].unique())
 
-    using_data = data[(data['county_fips'] <= data['county_fips'].unique()[numberOfSelectedCounties - 1])]
+    using_data = data#[(data['county_fips'] <= data['county_fips'].unique()[numberOfSelectedCounties - 1])]
     using_data = using_data.reset_index(drop=True)
     if (spatial_mode == 'county') or (spatial_mode == 'country'):
         if pivot == 'county':
@@ -791,8 +791,10 @@ def get_errors(h, c, method, y_prediction, y_prediction_train, y_test_date, y_tr
     meanAbsoluteError = mean_absolute_error(y_test, y_prediction)
     print("Mean Absolute Error of ", method, " for h =", h, "and #covariates =", c, ": %.2f" % meanAbsoluteError)
     sumOfAbsoluteError = sum(abs(y_test - y_prediction))
-    percentageOfAbsoluteError = (sumOfAbsoluteError / sum(y_test)) * 100
-    # percentageOfAbsoluteError = np.mean((abs(y_test - y_prediction)/y_test)*100)
+    if mode == 'val':
+        percentageOfAbsoluteError = (sumOfAbsoluteError / sum(y_test)) * 100
+    else :
+        percentageOfAbsoluteError = np.mean((abs(y_test - y_prediction)/y_test)*100)
     #(sumOfAbsoluteError / sum(y_test)) * 100
     # we change zero targets into 1 and add 1 to their predictions
     y_test_temp = y_test.copy()
@@ -822,8 +824,10 @@ def get_errors(h, c, method, y_prediction, y_prediction_train, y_test_date, y_tr
     # calculate whole country error
     country_errors['meanAbsoluteError'] = mean_absolute_error(y_test_country, y_prediction_country)
     sumOfAbsoluteError = sum(abs(y_test_country - y_prediction_country))
-    sumOfAbsoluteError = sum(abs(y_test - y_prediction))
-    country_errors['percentageOfAbsoluteError'] = (sumOfAbsoluteError / sum(y_test_country)) * 100
+    if mode == 'val':
+        country_errors['percentageOfAbsoluteError'] = (sumOfAbsoluteError / sum(y_test_country)) * 100
+    else:
+        country_errors['percentageOfAbsoluteError'] = np.mean((abs(y_test_country - y_prediction_country)/y_test_country)*100)
     #(sumOfAbsoluteError / sum(y_test_country)) * 100
     y_test_temp_country = y_test_country.copy()
     y_test_temp_country[y_test_country == 0] = 1
@@ -1551,7 +1555,7 @@ def main(maxHistory):
         push('logs of h=' + str(h) + ' added')
 
         # we run test if none of models have improved in curent h or if we passed half of maxhistory
-        if (number_of_improved_methods == 0) or (h == maxHistory // 2):  ###########################
+        if (number_of_improved_methods == 0) or (h == maxHistory // 2) or (h == 1):  ###########################
             print('jump to test process')
             test_process(h, r, test_size, target_name, spatial_mode, target_mode, best_h, best_c, historical_X_train, \
                          historical_X_test, historical_y_train_date, historical_y_test_date, best_loss, \

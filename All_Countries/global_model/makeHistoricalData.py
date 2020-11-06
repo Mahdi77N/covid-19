@@ -11,6 +11,36 @@ from zipfile import ZipFile
 def makeHistoricalData(h, r, test_size, target, feature_selection, spatial_mode, target_mode, address,
                        future_features, pivot):
     
+    def makeweekly(dailydata):
+            dailydata['date']=dailydata['date'].apply(lambda x: datetime.datetime.strptime(x,'%m/%d/%y'))
+            # dailydata.drop(['weekend'],axis=1,inplace=True)
+            # add weekday to find epidemic weeks
+            dailydata['weekday'] = dailydata['date'].apply(lambda x:x.weekday())
+            dailydata['county_fips']=1
+            dailydata.sort_values(by=['date','county_fips'],inplace=True)
+            dailydata = dailydata.reset_index(drop=True)
+            numberofcounties=len(dailydata['county_fips'].unique())
+            last_saturday_index = dailydata[dailydata['weekday']==5].last_valid_index()
+            dailydata = dailydata.loc[:last_saturday_index,:]
+            dailydata = dailydata.drop(['weekday'],axis=1)
+            numberofweeks=len(dailydata['date'].unique())//7
+
+            weeklydata=pd.DataFrame(columns=dailydata.columns.drop('date'))
+
+            for i in range(numberofweeks):
+                temp_df=dailydata.tail(numberofcounties*7) # weekly average of last week for all counties
+                date=temp_df.tail(1)['date'].iloc[0]
+                dailydata=dailydata.iloc[:-(numberofcounties*7),:]
+                sum_of_week = temp_df.groupby(['county_fips']).mean().reset_index()
+                temp_df = temp_df.groupby(['county_fips']).mean().reset_index()
+                temp_df[target] = sum_of_week[target]
+                temp_df['date'] = numberofweeks-i # week number 
+                weeklydata=weeklydata.append(temp_df)
+            weeklydata.sort_values(by=['county_fips','date'],inplace=True)
+            weeklydata=weeklydata.reset_index(drop=True)
+            # weeklydata['date']=weeklydata['date'].apply(lambda x: datetime.datetime.strftime(x,'%m/%d/%y'))
+            return(weeklydata)
+    
     ''' in this code when h is 1, it means there is no history and we have just one column for each covariate
     so when h is 0, we put h equal to 1, because when h is 0 that means there no history (as when h is 1) '''
     if h == 0:
@@ -24,6 +54,7 @@ def makeHistoricalData(h, r, test_size, target, feature_selection, spatial_mode,
     Countries = [file for file in ZipFile(zipFileName).namelist()]
     Countries_names = [x.replace('GoogleMobility_Cases_Deaths_Daily/', '').replace('.csv', '') for x in Countries][1:]
     # Countries_names.remove('United States')
+    
     #####################################################################
     counter = 1
     country_numbers = pd.DataFrame(columns={'name', 'number'})
@@ -38,19 +69,23 @@ def makeHistoricalData(h, r, test_size, target, feature_selection, spatial_mode,
         country_data['Start-date'] = country_data['Start-date'].apply(lambda x: datetime.datetime.strftime(x, '%m/%d/%y'))
         country_data = country_data.rename(columns={'Start-date': 'date', 'Deaths': 'death', 'Cases': 'confirmed'})
         country_data = country_data.drop(['End-date'], axis=1)
-        if len(country_data.iloc[4:,:][country_data.iloc[4:,:]['death']==0])<1 : 
-            country_data['county_fips'] = counter
-            country_numbers.loc[counter-1,'name'] = nameOfCountry
-            country_numbers.loc[counter-1,'number'] = counter
-            country_map[nameOfCountry] = counter
-            for col in ['confirmed']:
-                country_data.loc[country_data[col]<0,col] = country_data[col].mean()
-            all_countries = all_countries.append(country_data)
-            # independantOfTimeData['date'] =
-            counter += 1
+#         weekly_country_data = makeweekly(country_data.copy())
+        
+#         if len(weekly_country_data.tail(7)[weekly_country_data.tail(7)['death']<=0])<1 : 
+#             if len(weekly_country_data.tail(7)[~pd.isnull(weekly_country_data.tail(7)['death'])])==7 : 
+            
+        country_data['county_fips'] = counter
+        country_numbers.loc[counter-1,'name'] = nameOfCountry
+        country_numbers.loc[counter-1,'number'] = counter
+        country_map[nameOfCountry] = counter
+        for col in ['confirmed','death']:
+            country_data.loc[country_data[col]<0,col] = country_data[col].mean()
+            country_data.loc[pd.isnull(country_data[col]),col] = country_data[col].mean()
+        all_countries = all_countries.append(country_data)
+        # independantOfTimeData['date'] =
+        counter += 1
             
     print('number of countries :' + str(counter))
-    all_countries.to_csv('all.csv')
     country_numbers.to_csv('country_numbers.csv')
     timeDeapandantData = all_countries.copy()
 
@@ -102,7 +137,16 @@ def makeHistoricalData(h, r, test_size, target, feature_selection, spatial_mode,
 
         
         timeDeapandantData=make_weekly(timeDeapandantData)
-    
+        
+        for i in timeDeapandantData['county_fips'].unique():
+            dd = timeDeapandantData[timeDeapandantData['county_fips']==i].tail(7)
+            if len(dd[dd['death']<=0])>0 or len(dd[pd.isnull(dd['death'])])>0 :
+                timeDeapandantData = timeDeapandantData=timeDeapandantData[timeDeapandantData['county_fips']!=i]
+        
+        
+        for col in ['confirmed','death']:
+            timeDeapandantData.loc[timeDeapandantData[col]<0,col] = timeDeapandantData[col].mean()
+            timeDeapandantData.loc[pd.isnull(timeDeapandantData[col]),col] = timeDeapandantData[col].mean()
     
     ###################################################################### weekly moving average mode
     if target_mode == 'weeklymovingaverage':
@@ -432,7 +476,8 @@ def makeHistoricalData(h, r, test_size, target, feature_selection, spatial_mode,
 
     if 'index' in result.columns:
       result = result.drop(['index'],axis=1)
-    result.to_csv('result.csv')
+
+    
     return result
 
 
