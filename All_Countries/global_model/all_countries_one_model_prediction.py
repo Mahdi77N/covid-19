@@ -1080,21 +1080,21 @@ def test_process(h, r, test_size, target_name, spatial_mode, target_mode, best_h
         for method in none_mixed_methods:
             X_train_to_use[method] = X_train.copy()
             X_test_to_use[method] = X_test.copy()
-            # if method in models_to_log:
-            #     # make temporal and some fixed covariates logarithmic
-            #     negative_features = ['Retail', 'Grocery', 'Parks', 'Transit', 'Workplace', 'Residential']
-            #     for covar in mixed_model_covariates_names:
-            #         if (' t' in covar) and (covar.split(' ')[0] not in negative_features) and (
-            #                 covar not in ['county_fips', 'date of day t']):
-            #             X_train_to_use[method][covar] = np.log((X_train_to_use[method][covar] + 1).astype(float))
-            #             X_test_to_use[method][covar] = np.log((X_test_to_use[method][covar] + 1).astype(float))
-            #
-            #     fix_log_list = ['total_population', 'population_density', 'area', 'median_household_income',
-            #                     'houses_density', 'airport_distance', 'deaths_per_100000']
-            #     for covar in fix_log_list:
-            #         if covar in mixed_model_covariates_names:
-            #             X_train_to_use[method][covar] = np.log((X_train_to_use[method][covar] + 1).astype(float))
-            #             X_test_to_use[method][covar] = np.log((X_test_to_use[method][covar] + 1).astype(float))
+            if method in models_to_log:
+                # make temporal and some fixed covariates logarithmic
+                negative_features = ['Retail', 'Grocery', 'Parks', 'Transit', 'Workplace', 'Residential']
+                for covar in mixed_model_covariates_names:
+                    if (' t' in covar) and (covar.split(' ')[0] not in negative_features) and (
+                            covar not in ['county_fips', 'date of day t']):
+                        X_train_to_use[method][covar] = np.log((X_train_to_use[method][covar] + 1).astype(float))
+                        X_test_to_use[method][covar] = np.log((X_test_to_use[method][covar] + 1).astype(float))
+            
+                fix_log_list = ['total_population', 'population_density', 'area', 'median_household_income',
+                                'houses_density', 'airport_distance', 'deaths_per_100000']
+                for covar in fix_log_list:
+                    if covar in mixed_model_covariates_names:
+                        X_train_to_use[method][covar] = np.log((X_train_to_use[method][covar] + 1).astype(float))
+                        X_test_to_use[method][covar] = np.log((X_test_to_use[method][covar] + 1).astype(float))
 
             X_train_dict[method] = X_train_to_use[method]
             X_test_dict[method] = X_test_to_use[method]
@@ -1294,27 +1294,27 @@ def main(maxHistory):
             X_train_train_to_use[method] = X_train_train.copy()
             X_train_val_to_use[method] = X_train_val.copy()
             X_test_to_use[method] = X_test.copy()
-            # if method in models_to_log:
-            #     # make temporal and some fixed covariates logarithmic
-            #     negative_features = ['Retail', 'Grocery', 'Parks', 'Transit', 'Workplace', 'Residential']
-            #     for covar in covariates_names:
-            #         if (' t' in covar) and (covar.split(' ')[0] not in negative_features):
-            #             # print(covar)
-            #             X_train_train_to_use[method][covar] = np.log(
-            #                 (X_train_train_to_use[method][covar] + 1).astype(float))
-            #             X_train_val_to_use[method][covar] = np.log(
-            #                 (X_train_val_to_use[method][covar] + 1).astype(float))
-            #             X_test_to_use[method][covar] = np.log((X_test_to_use[method][covar] + 1).astype(float))
-            #
-            #     fix_log_list = ['total_population', 'population_density', 'area', 'median_household_income',
-            #                     'houses_density', 'airport_distance', 'deaths_per_100000']
-            #     for covar in fix_log_list:
-            #         if covar in covariates_names:
-            #             X_train_train_to_use[method][covar] = np.log(
-            #                 (X_train_train_to_use[method][covar] + 1).astype(float))
-            #             X_train_val_to_use[method][covar] = np.log(
-            #                 (X_train_val_to_use[method][covar] + 1).astype(float))
-            #             X_test_to_use[method][covar] = np.log((X_test_to_use[method][covar] + 1).astype(float))
+            if method in models_to_log:
+                # make temporal and some fixed covariates logarithmic
+                negative_features = ['Retail', 'Grocery', 'Parks', 'Transit', 'Workplace', 'Residential']
+                for covar in covariates_names:
+                    if (' t' in covar) and (covar.split(' ')[0] not in negative_features):
+                        # print(covar)
+                        X_train_train_to_use[method][covar] = np.log(
+                            (X_train_train_to_use[method][covar] + 1).astype(float))
+                        X_train_val_to_use[method][covar] = np.log(
+                            (X_train_val_to_use[method][covar] + 1).astype(float))
+                        X_test_to_use[method][covar] = np.log((X_test_to_use[method][covar] + 1).astype(float))
+            
+                fix_log_list = ['total_population', 'population_density', 'area', 'median_household_income',
+                                'houses_density', 'airport_distance', 'deaths_per_100000']
+                for covar in fix_log_list:
+                    if covar in covariates_names:
+                        X_train_train_to_use[method][covar] = np.log(
+                            (X_train_train_to_use[method][covar] + 1).astype(float))
+                        X_train_val_to_use[method][covar] = np.log(
+                            (X_train_val_to_use[method][covar] + 1).astype(float))
+                        X_test_to_use[method][covar] = np.log((X_test_to_use[method][covar] + 1).astype(float))
 
         y_train_date = (pd.DataFrame(y_train_train_date).append(pd.DataFrame(y_train_val_date))).reset_index(drop=True)
         y_train_train = np.array(y_train_train_date['Target']).reshape(-1)
