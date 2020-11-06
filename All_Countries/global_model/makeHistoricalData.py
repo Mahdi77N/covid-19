@@ -29,7 +29,7 @@ def makeHistoricalData(h, r, test_size, target, feature_selection, spatial_mode,
     country_numbers = pd.DataFrame(columns={'name', 'number'})
     country_map = {}
     all_countries = pd.DataFrame()
-    for nameOfCountry in ['United States', 'United Kingdom']: #Countries_names
+    for nameOfCountry in Countries_names :
         country_address = 'GoogleMobility_Cases_Deaths_Daily/' + nameOfCountry + '.csv'
         with ZipFile(zipFileName, 'r') as zip:
             country_file = zip.extract(country_address)
