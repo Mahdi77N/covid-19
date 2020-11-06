@@ -107,7 +107,7 @@ def NN(X_train, X_test, y_train, y_test, loss):
             # transform training dataset
             trainX = input_scaler.transform(trainX)
             # fit scaler
-            input_scaler.fit(testX)
+            # input_scaler.fit(testX)
             # transform test dataset
             testX = input_scaler.transform(testX)
         if output_scaler is not None:
@@ -119,7 +119,7 @@ def NN(X_train, X_test, y_train, y_test, loss):
             # transform training dataset
             trainy = output_scaler.transform(trainy)
             # fit scaler on testing dataset
-            output_scaler.fit(testy)
+            # output_scaler.fit(testy)
             # transform test dataset
             testy = output_scaler.transform(testy)
         return trainX, trainy, testX, testy
@@ -164,7 +164,7 @@ def NN(X_train, X_test, y_train, y_test, loss):
     train_mse = NeuralNetworkObject.evaluate(trainX, trainy)[1]
     print('NN mse train: ', train_mse)
     y_prediction = NeuralNetworkObject.predict(testX)
-    y_prediction = denormalize(y_test, y_prediction, MinMaxScaler())
+    y_prediction = denormalize(y_train, y_prediction, MinMaxScaler())
     y_prediction_train = NeuralNetworkObject.predict(trainX)
     y_prediction_train = denormalize(y_train, y_prediction_train, MinMaxScaler())
 
@@ -247,7 +247,7 @@ def NN_grid_search(X_train, y_train , X_test, y_test):
             # transform training dataset
             trainX = input_scaler.transform(trainX)
             # fit scaler
-            input_scaler.fit(testX)
+            # input_scaler.fit(testX)
             # transform test dataset
             testX = input_scaler.transform(testX)
         if output_scaler is not None:
@@ -259,7 +259,7 @@ def NN_grid_search(X_train, y_train , X_test, y_test):
             # transform training dataset
             trainy = output_scaler.transform(trainy)
             # fit scaler on testing dataset
-            output_scaler.fit(testy)
+            # output_scaler.fit(testy)
             # transform test dataset
             testy = output_scaler.transform(testy)
         return trainX, trainy, testX, testy
