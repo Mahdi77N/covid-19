@@ -38,13 +38,18 @@ def makeHistoricalData(h, r, test_size, target, feature_selection, spatial_mode,
         country_data['Start-date'] = country_data['Start-date'].apply(lambda x: datetime.datetime.strftime(x, '%m/%d/%y'))
         country_data = country_data.rename(columns={'Start-date': 'date', 'Deaths': 'death', 'Cases': 'confirmed'})
         country_data = country_data.drop(['End-date'], axis=1)
-        country_data['county_fips'] = counter
-        country_numbers.loc[counter-1,'name'] = nameOfCountry
-        country_numbers.loc[counter-1,'number'] = counter
-        country_map[nameOfCountry] = counter
-        all_countries = all_countries.append(country_data)
-        # independantOfTimeData['date'] =
-        counter += 1
+        if len(country_data.iloc[4:,:][country_data.iloc[4:,:]['death']==0])<1 : 
+            country_data['county_fips'] = counter
+            country_numbers.loc[counter-1,'name'] = nameOfCountry
+            country_numbers.loc[counter-1,'number'] = counter
+            country_map[nameOfCountry] = counter
+            for col in ['confirmed']:
+                country_data.loc[country_data[col]<0,col] = country_data[col].mean()
+            all_countries = all_countries.append(country_data)
+            # independantOfTimeData['date'] =
+            counter += 1
+            
+    print('number of countries :' + str(counter))
     all_countries.to_csv('all.csv')
     country_numbers.to_csv('country_numbers.csv')
     timeDeapandantData = all_countries.copy()
@@ -427,7 +432,7 @@ def makeHistoricalData(h, r, test_size, target, feature_selection, spatial_mode,
 
     if 'index' in result.columns:
       result = result.drop(['index'],axis=1)
-    
+    result.to_csv('result.csv')
     return result
 
 

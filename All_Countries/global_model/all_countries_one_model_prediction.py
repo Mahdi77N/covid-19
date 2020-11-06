@@ -219,6 +219,9 @@ def mase_denominator(r, h, data, target_name, target_mode, numberOfSelectedCount
 ########################################################### run non-mixed methods in parallel
 def parallel_run(method, X_train_train, X_train_val, y_train_train, y_train_val, best_loss, c):
     y_prediction, y_prediction_train = None, None
+    
+    
+    
     if method == 'GBM':
         y_prediction, y_prediction_train = GBM(X_train_train, X_train_val, y_train_train, best_loss['GBM'])
     elif method == 'GLM':
@@ -253,6 +256,7 @@ def run_algorithms(X_train_dict, X_val_dict, y_train_dict, y_val_dict, best_loss
     y_val = {method: None for method in methods}
     loom = ProcessLoom(max_runner_cap=4)
     # add the functions to the multiprocessing object, loom
+    print('X_train_dict',X_train_dict)
     if spatial_mode == 'country':
         for method in methods:
             X_train[method] = X_train_dict[method].drop(['county_fips', 'date of day t'], axis=1)
@@ -787,7 +791,8 @@ def get_errors(h, c, method, y_prediction, y_prediction_train, y_test_date, y_tr
     meanAbsoluteError = mean_absolute_error(y_test, y_prediction)
     print("Mean Absolute Error of ", method, " for h =", h, "and #covariates =", c, ": %.2f" % meanAbsoluteError)
     sumOfAbsoluteError = sum(abs(y_test - y_prediction))
-    percentageOfAbsoluteError = np.mean((abs(y_test - y_prediction)/y_test)*100)
+    percentageOfAbsoluteError = (sumOfAbsoluteError / sum(y_test)) * 100
+    # percentageOfAbsoluteError = np.mean((abs(y_test - y_prediction)/y_test)*100)
     #(sumOfAbsoluteError / sum(y_test)) * 100
     # we change zero targets into 1 and add 1 to their predictions
     y_test_temp = y_test.copy()
@@ -817,7 +822,8 @@ def get_errors(h, c, method, y_prediction, y_prediction_train, y_test_date, y_tr
     # calculate whole country error
     country_errors['meanAbsoluteError'] = mean_absolute_error(y_test_country, y_prediction_country)
     sumOfAbsoluteError = sum(abs(y_test_country - y_prediction_country))
-    country_errors['percentageOfAbsoluteError'] = np.mean((abs(y_test - y_prediction)/y_test)*100)
+    sumOfAbsoluteError = sum(abs(y_test - y_prediction))
+    country_errors['percentageOfAbsoluteError'] = (sumOfAbsoluteError / sum(y_test_country)) * 100
     #(sumOfAbsoluteError / sum(y_test_country)) * 100
     y_test_temp_country = y_test_country.copy()
     y_test_temp_country[y_test_country == 0] = 1
@@ -1024,7 +1030,8 @@ def test_process(h, r, test_size, target_name, spatial_mode, target_mode, best_h
 
     GBM, GLM, KNN, NN = run_algorithms(historical_X_train, historical_X_test, historical_y_train_date,
                                        historical_y_test_date, best_loss, 0, spatial_mode, None)
-
+    
+    
     y_prediction['GBM'], y_prediction_train['GBM'] = GBM
     y_prediction['GLM'], y_prediction_train['GLM'] = GLM
     y_prediction['KNN'], y_prediction_train['KNN'] = KNN
@@ -1369,6 +1376,9 @@ def main(maxHistory):
                 print('X_train_val_temp shape:', X_train_val_temp.shape)
                 print('y_train_train shape:', y_train_train.shape)
                 print('y_train_val shape:', y_train_val.shape)
+                
+                
+                X_train_train_temp.to_csv('X_train_train_temp.csv')
                 loom.add_function(parallel_run,
                                   [method, X_train_train_temp, X_train_val_temp, y_train_train, y_train_val, best_loss,
                                    indx_c])

@@ -214,7 +214,7 @@ def GBM_grid_search(X_train, y_train , X_val, y_val):
 
     parameters = {'max_depth': 40, 'min_samples_leaf': 1,
                   'learning_rate': 0.01}
-    param_grid = {'loss': ['poisson', 
+    param_grid = {'loss': [#'poisson', 
                            'least_squares',
                            'least_absolute_deviation']}
 

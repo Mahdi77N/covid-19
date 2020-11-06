@@ -409,6 +409,8 @@ def makeHistoricalData(h, r, test_size, target, feature_selection, spatial_mode,
 
     if 'index' in result.columns:
       result = result.drop(['index'],axis=1)
+      
+    result.to_csv('result.csv')
     
     return result
 
