@@ -82,7 +82,6 @@ def makeHistoricalData(h, r, test_size, target, feature_selection, spatial_mode,
                 for col in ['confirmed','death']:
                     country_data.loc[country_data[col]<0,col] = country_data[col].mean()
                     country_data.loc[pd.isnull(country_data[col]),col] = country_data[col].mean()
-                country_data.to_csv(nameOfCountry+'.csv')
                 all_countries = all_countries.append(country_data)
                 counter += 1
 
