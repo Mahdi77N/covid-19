@@ -96,7 +96,7 @@ def makeHistoricalData(h, r, test_size, target, feature_selection, spatial_mode,
     print(len(all_countries['county_fips'].unique()))
 
     print('number of countries :' + str(counter))
-    country_numbers.to_csv('country_numbers.csv')
+    country_numbers.to_csv('r = ' + str(r) + './'+'country_numbers.csv')
     timeDeapandantData = all_countries.copy()
 
     ##################################################################### cumulative mode
