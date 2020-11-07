@@ -293,7 +293,7 @@ def create_model(inputSize, hiddenDropout, visibleDropout, noBlocks, noDenseLaye
 
     # Layers after last block
     for i in range(noDenseLayer - 1):
-        model.add(Dense(512))
+        model.add(Dense(1024))
     # Last layer
     model.add(Dense(1))
 
