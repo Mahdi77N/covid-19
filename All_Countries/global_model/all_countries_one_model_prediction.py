@@ -41,7 +41,7 @@ tf.random.set_seed(1)
 plt.rcParams.update({'figure.max_open_warning': 0})
 
 pivot = 'county'
-r = 28  # the following day to predict
+r = int(argv[1]) * 7 # the following day to predict
 numberOfSelectedCounties = -1
 target_mode = 'weeklyaverage'
 spatial_mode = 'country'
@@ -1601,10 +1601,11 @@ if __name__ == "__main__":
     #     # future_mode = True
     #     future_features = ['social-distancing-travel-distance-grade', 'social-distancing-encounters-grade',
     #                        'social-distancing-total-grade']  # sorted by their mrmr rank
-    maxHistory = 5
+#     maxHistory = 5
+    print(target_mode)
     if target_mode in ['weeklyaverage','augmentedweeklyaverage']:
         r //= 7
-        # maxHistoty = 10 - r
+        maxHistory = min(5,(10 - r))
         # maxHistory //= 7
         print('max history: ', maxHistory)
         test_size //= 7
@@ -1620,10 +1621,10 @@ if __name__ == "__main__":
     models_to_log = ['NN', 'GLM', 'GBM'] #,'KNN' # models we want to make the features logarithmic for them, we remove KNN
     # for country in Countries_names:
     # make directories for saving the results
-    validation_address = './' + 'results/max_history=' + str(maxHistory) + '/validation/'
-    test_address = './' + 'results/max_history=' + str(maxHistory) + '/test/'
-    env_address = './' + 'results/max_history=' + str(maxHistory) + '/session_parameters/'
-    mail_address = './results/max_history=' + str(maxHistory) + '/email'
+    validation_address = 'r = ' + str(argv[1]) + './' + 'results/max_history=' + str(maxHistory) + '/validation/'
+    test_address = 'r = ' + str(argv[1]) + './' + 'results/max_history=' + str(maxHistory) + '/test/'
+    env_address = 'r = ' + str(argv[1]) + './' + 'results/max_history=' + str(maxHistory) + '/session_parameters/'
+    mail_address = 'r = ' + str(argv[1]) + './' + 'results/max_history=' + str(maxHistory) + '/email'
 
     if not os.path.exists(mail_address):
         os.makedirs(mail_address)
