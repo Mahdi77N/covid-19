@@ -10,7 +10,7 @@ def Run(i):
 def main():
 #     loom = ProcessLoom(max_runner_cap = 8)
     for r in range(1,10):
-        
+        print('*' * 200)
         print('r = ',r)
         Run(r)
 #         loom.add_function(Run,[i])
