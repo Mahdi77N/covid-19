@@ -8,7 +8,7 @@ def Run(i):
     subprocess.call("python ./all_countries_one_model_prediction.py "+str(i), shell=True)
 
 def main():
-    loom = ProcessLoom(max_runner_cap = 8)
+#     loom = ProcessLoom(max_runner_cap = 8)
     for r in range(1,10):
         
         print('r = ',r)
