@@ -44,7 +44,7 @@ def main():
             er = errors.T
             errors['min_error']=er.min()
             errors = errors.sort_values(by=['min_error'])
-            errors.to_csv('r = ' + str(r) + '/' + 'results/errors.csv')
+            errors.to_csv('r = ' + str(r) + './' + 'results/errors.csv')
             
 if __name__ == "__main__":
     
