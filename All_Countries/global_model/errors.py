@@ -13,7 +13,7 @@ def main():
     methods = ['GBM', 'GLM', 'KNN', 'NN', 'MM_GLM', 'MM_NN']
     countries = names['name'].unique()
     
-    for r in range(1,5):
+    for r in range(1,10):
         
         maxHistory = min(5,(10-r))
         root_add = 'r = ' + str(r) + './' + 'results/max_history=' + str(maxHistory) + '/test/all_errors/'
