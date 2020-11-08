@@ -29,7 +29,7 @@ def main():
                 
                 for country in countries:
                     data = predictions[method]
-                    data = pd.merge(data,names,right_on=['number'],left_on=['county_fips'])
+                    data = pd.merge(data,names,right_on=['number'],left_on=['county_fips'], sort=False)
                     y_test = np.array(data[data['name']==country]['Target'])
                     y_prediction = np.array(data[data['name']==country]['prediction'])
                     y_prediction[y_prediction < 0] = 0
