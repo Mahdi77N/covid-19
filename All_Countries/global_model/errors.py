@@ -13,7 +13,7 @@ def main():
     methods = ['GBM', 'GLM', 'KNN', 'NN', 'MM_GLM', 'MM_NN']
     countries = names['name'].unique()
     
-    for r in range(1,10):
+    for r in range(1,5):
         
         maxHistory = min(5,(10-r))
         root_add = 'r = ' + str(r) + './' + 'results/max_history=' + str(maxHistory) + '/test/all_errors/'
@@ -44,7 +44,7 @@ def main():
             er = errors.T
             errors['min_error']=er.min()
             errors = errors.sort_values(by=['min_error'])
-            errors.to_csv('r = ' + str(r) + './' + 'results/errors.csv')
+            errors.to_csv('r = ' + str(r) + '/' + 'results/errors.csv')
             
 if __name__ == "__main__":
     
