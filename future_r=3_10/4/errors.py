@@ -10,7 +10,7 @@ def main():
     predictions = {i:template for i in methods}
     for method in methods:
         for i in range(7):
-            address = './'+str(i)+'/results/counties=1535 max_history=6/test/all_errors/' + method + '/all_errors_'+method+'.csv'
+            address = './'+str(i)+'/results/counties=1535 max_history=5/test/all_errors/' + method + '/all_errors_'+method+'.csv'
             temp = pd.read_csv(address)
             predictions[method]=predictions[method].append(temp)
 
