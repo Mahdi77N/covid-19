@@ -1031,7 +1031,10 @@ def test_process(h, r, test_size, target_name, spatial_mode, target_mode, best_h
     y_prediction['NN'], y_prediction_train['NN'] = NN
     table_data = []
     country_table_data = []
-
+    best_mape = 10000
+    best_method = None
+    best_c_overall = None
+    best_h_overall = None
     for method in none_mixed_methods:
         meanAbsoluteError, percentageOfAbsoluteError, adj_r_squared, second_error, meanAbsoluteScaledError, country_errors = get_errors(
             best_h[method]['MAPE'],
@@ -1047,6 +1050,12 @@ def test_process(h, r, test_size, target_name, spatial_mode, target_mode, best_h
             [best_h[method]['MAPE'], best_c[method]['MAPE'], round(country_errors['meanAbsoluteError'], 2),
              round(country_errors['percentageOfAbsoluteError'], 2), round(country_errors['adj_r_squared'], 2),
              round(country_errors['second_error'], 2), round(country_errors['MASE'], 2)])
+
+        if percentageOfAbsoluteError < best_mape:
+            best_mape = percentageOfAbsoluteError
+            best_method = method
+            best_c_overall = best_c[method]['MAPE']
+            best_h_overall = best_h[method]['MAPE']
 
     push('a new table added')
 
@@ -1124,18 +1133,19 @@ def test_process(h, r, test_size, target_name, spatial_mode, target_mode, best_h
         y_test_MM_dict[mixed_method] = np.array(y_test_MM_dict[mixed_method]['Target']).reshape(-1)
         y_train_MM_dict[mixed_method] = np.array(y_train_MM_dict[mixed_method]['Target']).reshape(-1)
     # save the entire session
-    filename = env_address + 'test.out'
-    my_shelf = shelve.open(filename, 'n')  # 'n' for new
-    for key in dir():
-        try:
-            my_shelf[key] = locals()[key]
-        except:
-            print('ERROR shelving: {0}'.format(key))
-    my_shelf.close()
+    # filename = env_address + 'test.out'
+    # my_shelf = shelve.open(filename, 'n')  # 'n' for new
+    # for key in dir():
+    #     try:
+    #         my_shelf[key] = locals()[key]
+    #     except:
+    #         print('ERROR shelving: {0}'.format(key))
+    # my_shelf.close()
     # mixed model with linear regression and neural network
     MM_GLM, MM_NN = run_mixed_models(X_train_MM_dict, X_test_MM_dict, y_train_MM_dict, y_test_MM_dict, best_loss)
     y_prediction['MM_GLM'], y_prediction_train['MM_GLM'] = MM_GLM
     y_prediction['MM_NN'], y_prediction_train['MM_NN'] = MM_NN
+
     for mixed_method in mixed_methods:
         meanAbsoluteError, percentageOfAbsoluteError, adj_r_squared, second_error, meanAbsoluteScaledError, country_errors = get_errors(
             best_h[mixed_method]['MAPE'],
@@ -1152,11 +1162,29 @@ def test_process(h, r, test_size, target_name, spatial_mode, target_mode, best_h
              round(country_errors['percentageOfAbsoluteError'], 2), round(country_errors['adj_r_squared'], 2),
              round(country_errors['second_error'], 2), round(country_errors['MASE'], 2)])
 
+        if percentageOfAbsoluteError < best_mape:
+            best_mape = percentageOfAbsoluteError
+            best_method = mixed_method
+            best_c_overall = best_c[mixed_method]['MAPE']
+            best_h_overall = best_h[mixed_method]['MAPE']
+
     table_name = 'table_of_best_test_results'
     plot_table(table_data, columns_table_t, methods, table_name, mode='test')
     table_name = 'table_of_country_best_test_results'
     plot_table(country_table_data, columns_table_t, methods, table_name, mode='test')
     push('a new table added')
+
+    ###### check if future features are used in the best model
+    used_covariates = covariates_names[:best_c_overall]
+    used_futures = [feature for feature in future_features if feature in used_covariates]
+    f = open("used_future_features.txt", "w")
+    f.write("best model:" + str(best_method) +'\n')
+    f.write("best_h:"+ str(best_h_overall)+ ", best_c:" + str(best_c_overall) + '\n')
+    f.write("selected covariates:" + str(used_covariates)+'\n')
+    f.write("selected future features:"+str(used_futures))
+    f.close()
+
+
 
     for method in mixed_methods:
         method_real_pred_df = y_train[method].append(y_test[method])
@@ -1177,14 +1205,14 @@ def test_process(h, r, test_size, target_name, spatial_mode, target_mode, best_h
     # send_email(zip_file_name + '.zip')
 
     # save the entire session
-    filename = env_address + 'test.out'
-    my_shelf = shelve.open(filename, 'n')  # 'n' for new
-    for key in dir():
-        try:
-            my_shelf[key] = locals()[key]
-        except:
-            print('ERROR shelving: {0}'.format(key))
-    my_shelf.close()
+    # filename = env_address + 'test.out'
+    # my_shelf = shelve.open(filename, 'n')  # 'n' for new
+    # for key in dir():
+    #     try:
+    #         my_shelf[key] = locals()[key]
+    #     except:
+    #         print('ERROR shelving: {0}'.format(key))
+    # my_shelf.close()
 
 
 ########################################################### main
@@ -1386,14 +1414,14 @@ def main(maxHistory):
         #     print(y_prediction[method][(h, 4)].shape)
 
         # save the entire session for each h and c
-        filename = env_address + 'validation.out'
-        my_shelf = shelve.open(filename, 'n')  # 'n' for new
-        for key in dir():
-            try:
-                my_shelf[key] = locals()[key]
-            except:
-                print('ERROR shelving: {0}'.format(key))
-        my_shelf.close()
+        # filename = env_address + 'validation.out'
+        # my_shelf = shelve.open(filename, 'n')  # 'n' for new
+        # for key in dir():
+        #     try:
+        #         my_shelf[key] = locals()[key]
+        #     except:
+        #         print('ERROR shelving: {0}'.format(key))
+        # my_shelf.close()
 
         # find best loss
         # if h == 1:
@@ -1445,14 +1473,14 @@ def main(maxHistory):
         #     print(y_prediction[method][(h, 4)].shape)
 
         # save the entire session for each h and c
-        filename = env_address + 'validation.out'
-        my_shelf = shelve.open(filename, 'n')  # 'n' for new
-        for key in dir():
-            try:
-                my_shelf[key] = locals()[key]
-            except:
-                print('ERROR shelving: {0}'.format(key))
-        my_shelf.close()
+        # filename = env_address + 'validation.out'
+        # my_shelf = shelve.open(filename, 'n')  # 'n' for new
+        # for key in dir():
+        #     try:
+        #         my_shelf[key] = locals()[key]
+        #     except:
+        #         print('ERROR shelving: {0}'.format(key))
+        # my_shelf.close()
 
         number_of_improved_methods = 0  # we count number_of_improved_methods to run test if no method have improved in current h
 
@@ -1509,23 +1537,23 @@ def main(maxHistory):
             if indx_c == maxC:
                 break
             # save the entire session for each h and c
-            filename = env_address + 'validation.out'
-            my_shelf = shelve.open(filename, 'n')  # 'n' for new
-            for key in dir():
-                try:
-                    my_shelf[key] = locals()[key]
-                except:
-                    print('ERROR shelving: {0}'.format(key))
-            my_shelf.close()
+            # filename = env_address + 'validation.out'
+            # my_shelf = shelve.open(filename, 'n')  # 'n' for new
+            # for key in dir():
+            #     try:
+            #         my_shelf[key] = locals()[key]
+            #     except:
+            #         print('ERROR shelving: {0}'.format(key))
+            # my_shelf.close()
         # save the entire session for each h
-        filename = env_address + 'validation.out'
-        my_shelf = shelve.open(filename, 'n')  # 'n' for new
-        for key in dir():
-            try:
-                my_shelf[key] = locals()[key]
-            except:
-                print('ERROR shelving: {0}'.format(key))
-        my_shelf.close()
+        # filename = env_address + 'validation.out'
+        # my_shelf = shelve.open(filename, 'n')  # 'n' for new
+        # for key in dir():
+        #     try:
+        #         my_shelf[key] = locals()[key]
+        #     except:
+        #         print('ERROR shelving: {0}'.format(key))
+        # my_shelf.close()
 
         # push the file of outputs
         push('logs of h=' + str(h) + ' added')

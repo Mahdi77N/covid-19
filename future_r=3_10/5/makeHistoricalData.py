@@ -368,7 +368,8 @@ def makeHistoricalData(h, r, test_size, target, feature_selection, spatial_mode,
         allData = pd.merge(independantOfTimeData, timeDeapandantData, on='county_fips')
     else:
         allData = timeDeapandantData
-
+    allData['death'] = allData['death'].astype(float)
+    allData['confirmed'] = allData['confirmed'].astype(float)
     allData = allData.sort_values(by=['date', 'county_fips'])
     allData = allData.reset_index(drop=True)
 
