@@ -24,11 +24,10 @@ def main():
             y_prediction[y_prediction < 0] = 0
             meanAbsoluteError = mean_absolute_error(y_test, y_prediction)
             print("Mean Absolute Error of ", method, ": %.2f" % meanAbsoluteError)
-            print("\n")
             sumOfAbsoluteError = sum(abs(y_test - y_prediction))
             percentageOfAbsoluteError = np.mean((abs(y_test - y_prediction)/y_test)*100)
             print("Percentage of Absolute Error of ", method, ": %.2f" % percentageOfAbsoluteError)
-	    print("\n")
+
     sys.stdout = orig_stdout
     f.close()
       
