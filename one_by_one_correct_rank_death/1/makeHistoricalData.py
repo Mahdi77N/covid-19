@@ -378,7 +378,7 @@ def makeHistoricalData(h, r, test_size, target, feature_selection, spatial_mode,
     ranking_Target = ranking_data.iloc[((step*(r))*totalNumberOfCounties):,:].reset_index(drop=True)
     ranking_features['target'] = ranking_Target[target]
     ranking_data = ranking_features
-    ranking_data = ranking_data.iloc[:-7,:]
+    ranking_data = ranking_data.iloc[:-(end_date+1),:]
 
 
     # this columns are not numercal and wouldn't be included in correlation matrix, we store them to concatenate them later
