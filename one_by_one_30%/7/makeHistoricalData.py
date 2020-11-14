@@ -90,7 +90,7 @@ def makeHistoricalData(h, r, test_size, target, feature_selection, spatial_mode,
 
     
     ##################################################################### imputation
-    get_updated_covid_data(address)
+#     get_updated_covid_data(address)
     independantOfTimeData = pd.read_csv(address + 'fixed-data.csv')
     timeDeapandantData = pd.read_csv(address + 'temporal-data.csv')
     
