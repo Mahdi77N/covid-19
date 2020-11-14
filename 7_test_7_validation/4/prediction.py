@@ -50,8 +50,8 @@ push_flag = 0
 # set the size of test set. validation and train sets will have 30/70 proportion from the remaining days (optional),
 # the default values are |test_set| = |val_set| = r, |train_set| = the remaining days
 test_size = 21
-# maxHistory = 2 * 7
-maxHistory = min((14 * 7 - r), 5 * 7)
+maxHistory = 4 * 7
+# maxHistory = min((14 * 7 - r), 5 * 7)
 maxC = 100  # maximum number of covariates to be considered
 
 data_address = '../data/'
@@ -495,7 +495,7 @@ def plot_table(table_data, col_labels, row_labels, name, mode):
     ax.axis('off')
 
     plt.savefig(address + name + '.pdf', bbox_inches='tight')
-    
+
     csv_table = pd.DataFrame(table_data, columns=col_labels)
     csv_table['method'] = list(row_labels)
     csv_table.to_csv(address + name +'.csv', index = False)

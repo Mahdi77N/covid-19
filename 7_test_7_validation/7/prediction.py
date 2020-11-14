@@ -68,11 +68,11 @@ def splitData(numberOfCounties, main_data, target, spatial_mode, mode):
     test_size = r
     if target_mode == 'weeklyaverage':
         test_size = 7
-        val_size = 1
+        val_size = 7
         # val_size = round(0.3 * (baseNumberOfDays - test_size))
     else:
         test_size = 21 #
-        val_size = 1
+        val_size = 7
         # val_size = round(0.3 * (baseNumberOfDays - test_size))
 
     if mode == 'val':
@@ -495,7 +495,7 @@ def plot_table(table_data, col_labels, row_labels, name, mode):
     ax.axis('off')
 
     plt.savefig(address + name + '.pdf', bbox_inches='tight')
-    
+
     csv_table = pd.DataFrame(table_data, columns=col_labels)
     csv_table['method'] = list(row_labels)
     csv_table.to_csv(address + name +'.csv', index = False)
