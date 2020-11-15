@@ -1,0 +1,12 @@
+Mean Absolute Error of  GBM : 175.31
+Percentage of Absolute Error of  GBM : 23.68
+Mean Absolute Error of  GLM : 127.57
+Percentage of Absolute Error of  GLM : 17.28
+Mean Absolute Error of  KNN : 77.76
+Percentage of Absolute Error of  KNN : 10.69
+Mean Absolute Error of  NN : 89.33
+Percentage of Absolute Error of  NN : 12.24
+Mean Absolute Error of  MM_GLM : 95.28
+Percentage of Absolute Error of  MM_GLM : 12.80
+Mean Absolute Error of  MM_NN : 246.25
+Percentage of Absolute Error of  MM_NN : 33.27

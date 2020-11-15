@@ -1,0 +1,2 @@
+,date of day t,county_fips,Target,prediction,error,absoulte_error,percentage_error
+26,28.0,1,701.0,942.4931250657835,241.4931250657835,241.4931250657835,34.44980386102475
