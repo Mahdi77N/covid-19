@@ -26,13 +26,14 @@
 # 	hidden dropout: [0.5, 1]
 # 	visible dropout: [0.8, 1]
 # 	last fc layers: [1, 2]
+#   architecture = [0, 1]
 # 	learning rate: [0.1, 0.01]
 # 	batch size: [16, 32, 64, 128]
 # 	pooling: ['MaxPooling', 'AveragePooling']
 
-# 256 cases
+# 384 cases
 # split to 64 processes
-# each one run 4 cases
+# each one run 6 cases
 ################################################################
 
 # parameters of models which we want to search
@@ -44,9 +45,10 @@ def create_parameters():
     visible_dropout = [0.8, 1]
     NO_dense_layer = [2, 1]
     increase_filters = [0]
+    architecture = [0, 1]
 
     learning_rate = [0.1, 0.01]
-    batch_size = [16, 32, 64, 128]
+    batch_size = [16, 64, 128]
     pooling_type = ['MaxPooling', 'AveragePooling']
 
     for i0 in range(len(input_size)):
@@ -58,18 +60,20 @@ def create_parameters():
                         if (input_size[i0] == 3 and increase_filters[i4] == 1):
                             continue
 
-                        for i5 in range(len(learning_rate)):
-                            for i6 in range(len(batch_size)):
-                                for i7 in range(len(pooling_type)):
-                                    parameters.append(
-                                        (input_size[i0],
-                                        hidden_dropout[i1],
-                                        visible_dropout[i2],
-                                        NO_dense_layer[i3],
-                                        increase_filters[i4],
-                                        learning_rate[i5],
-                                        batch_size[i6],
-                                        pooling_type[i7])
-                                        )
+                        for i8 in range(len(architecture)):
+                            for i5 in range(len(learning_rate)):
+                                for i6 in range(len(batch_size)):
+                                    for i7 in range(len(pooling_type)):
+                                        parameters.append(
+                                            (input_size[i0],
+                                            hidden_dropout[i1],
+                                            visible_dropout[i2],
+                                            NO_dense_layer[i3],
+                                            increase_filters[i4],
+                                            learning_rate[i5],
+                                            batch_size[i6],
+                                            pooling_type[i7],
+                                            architecture[i8])
+                                            )
 
     return parameters
