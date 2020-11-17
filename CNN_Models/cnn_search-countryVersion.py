@@ -259,7 +259,7 @@ def parse_data_into_instance(data):
 
     return (instance, result)
 
-def create_model(inputSize, hiddenDropout, visibleDropout, noBlocks, noDenseLayer, increaseFilters, learning_rate, pooling_type):
+def create_model(inputSize, hiddenDropout, visibleDropout, noBlocks, noDenseLayer, increaseFilters, learning_rate, pooling_type, architecture_type):
     # Set random seeds to make situation equal for all models 
     seed(_NUMPY_SEED_)
     set_seed(_TENSORFLOW_SEED_)
@@ -290,6 +290,12 @@ def create_model(inputSize, hiddenDropout, visibleDropout, noBlocks, noDenseLaye
         model.add(BatchNormalization())
         if (hiddenDropout != 1):
             model.add(Dropout(hiddenDropout))
+
+    if (architecture_type == 1):
+        model.add(Dense(1024))
+        model.add(Dense(1024))
+        model.add(Dense(1024))
+        model.add(BatchNormalization())
 
     # Layers after last block
     for i in range(noDenseLayer - 1):
@@ -749,10 +755,11 @@ def process_function(parameters,
         learning_rate = parameters[i][5]
         batch_size = parameters[i][6]
         pooling_type = parameters[i][7]
+        architecture_type = parameters[i][8]
 
-        log('Model testing with parameters {0}'.format((input_size, hidden_dropout, visible_dropout, NO_dense_layer, increase_filters, learning_rate, batch_size, pooling_type)))
+        log('Model testing with parameters {0}'.format((input_size, hidden_dropout, visible_dropout, NO_dense_layer, increase_filters, learning_rate, batch_size, pooling_type, architecture_type)))
         NO_blocks = floor(log2(input_size))
-        model = create_model(input_size, hidden_dropout, visible_dropout, NO_blocks, NO_dense_layer, increase_filters, learning_rate, pooling_type)
+        model = create_model(input_size, hidden_dropout, visible_dropout, NO_blocks, NO_dense_layer, increase_filters, learning_rate, pooling_type, architecture_type)
         train_data(model, shared_x_train, shared_y_train, shared_x_validation, shared_y_validation, 2, input_size, batch_size)
         result = evaluate_data(model, shared_x_validation, shared_y_validation, input_size, first_normal_param, second_normal_param)
 
