@@ -1,5 +1,5 @@
 from makeHistoricalData import makeHistoricalData
-from models import GBM, GLM, KNN, NN, MM_GLM, GBM_grid_search, NN_grid_search
+from models import GBM, GLM, KNN, NN, MM_GLM, GBM_grid_search, NN_grid_search, MM_NN
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -51,7 +51,7 @@ push_flag = 0
 # the default values are |test_set| = |val_set| = r, |train_set| = the remaining days
 test_size = 21
 # maxHistory = 2 * 7
-maxHistory = min((14 * 7 - r), 5 * 7)
+maxHistory = min((14 * 7 - r - (int(argv[1] - 6) * 7)), 5 * 7)
 maxC = 100  # maximum number of covariates to be considered
 
 
@@ -239,7 +239,7 @@ def mixed_parallel_run(method, X_train, X_test, y_train, y_test, best_loss):
     if method == 'MM_GLM':
         y_prediction, y_prediction_train = MM_GLM(X_train, X_test, y_train)
     elif method == 'MM_NN':
-        y_prediction, y_prediction_train = NN(X_train, X_test, y_train, y_test, best_loss[method])
+        y_prediction, y_prediction_train = MM_NN(X_train, X_test, y_train, y_test, best_loss[method])
 
     return y_prediction, y_prediction_train
 
@@ -301,7 +301,7 @@ def run_mixed_models(X_train_MM, X_test_MM, y_train_MM, y_test_MM, best_loss):
     loom = ProcessLoom(max_runner_cap=2)
     # add the functions to the multiprocessing object, loom
     loom.add_function(MM_GLM, [X_train_MM['MM_GLM'], X_test_MM['MM_GLM'], y_train_MM['MM_GLM']], {})
-    loom.add_function(NN, [X_train_MM['MM_NN'], X_test_MM['MM_NN'], y_train_MM['MM_NN'], y_test_MM['MM_NN'],
+    loom.add_function(MM_NN, [X_train_MM['MM_NN'], X_test_MM['MM_NN'], y_train_MM['MM_NN'], y_test_MM['MM_NN'],
                            best_loss['MM_NN']], {})
     # run the processes in parallel
     output = loom.execute()
@@ -493,7 +493,7 @@ def plot_table(table_data, col_labels, row_labels, name, mode):
     ax.axis('off')
 
     plt.savefig(address + name + '.pdf', bbox_inches='tight')
-    
+
     csv_table = pd.DataFrame(table_data, columns=col_labels)
     csv_table['method'] = list(row_labels)
     csv_table.to_csv(address + name +'.csv', index = False)

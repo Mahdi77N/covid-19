@@ -47,11 +47,14 @@ def GBM(X_train, X_test, y_train, loss):
 ###################################################### GLM: Generalized Linear Model, we use Lasso
 def GLM(X_train, X_test, y_train):
 
-    GLM_Model = ElasticNet(random_state=1)
-    GLM_Model.fit(X_train, y_train)
-    y_prediction = GLM_Model.predict(X_test)
-    y_prediction_train = GLM_Model.predict(X_train)
-    print('GLM coef: ', GLM_Model.coef_)
+#     GLM_Model = ElasticNet(random_state=1)
+#     GLM_Model.fit(X_train, y_train)
+#     y_prediction = GLM_Model.predict(X_test)
+#     y_prediction_train = GLM_Model.predict(X_train)
+#     print('GLM coef: ', GLM_Model.coef_)
+
+    y_prediction = [1]*len(X_test)
+    y_prediction_train = [1]*len(X_train)
 
     return np.array(y_prediction).ravel(), np.array(y_prediction_train).ravel()
 
@@ -170,6 +173,14 @@ def NN(X_train, X_test, y_train, y_test, loss):
 
     return np.array(y_prediction).ravel(), np.array(y_prediction_train).ravel()
 
+####################################################### MM-NN: Mixed Model with Neural Network
+def MM_NN(X_train, X_test, y_train, y_test, loss):
+    
+    y_prediction = [1]*len(X_test)
+    y_prediction_train = [1]*len(X_train)
+    
+    return np.array(y_prediction).ravel(), np.array(y_prediction_train).ravel()
+
 ######################################################### MM-LR: Mixed Model with Linear Regression
 def MM_LR(X_train, X_test, y_train):
 
@@ -200,11 +211,13 @@ def MM_LR(X_train, X_test, y_train):
 
 def MM_GLM(X_train, X_test, y_train):
 
-    GLM_Model = ElasticNet(random_state=1 ,max_iter=2000)
-    GLM_Model.fit(X_train, y_train)
-    y_prediction = GLM_Model.predict(X_test)
-    y_prediction_train = GLM_Model.predict(X_train)
-    print('GLM coef: ', GLM_Model.coef_)
+#     GLM_Model = ElasticNet(random_state=1 ,max_iter=2000)
+#     GLM_Model.fit(X_train, y_train)
+#     y_prediction = GLM_Model.predict(X_test)
+#     y_prediction_train = GLM_Model.predict(X_train)
+#     print('GLM coef: ', GLM_Model.coef_)
+    y_prediction = [1]*len(X_test)
+    y_prediction_train = [1]*len(X_train)
 
     return np.array(y_prediction).ravel(), np.array(y_prediction_train).ravel()
 
