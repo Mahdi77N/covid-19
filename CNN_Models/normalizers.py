@@ -5,7 +5,7 @@ import datetime
 from os import getpid
 
 normalize_methods = ['minMax', 'standard', 'logarithm']
-current_method = 2
+current_method = 1
 
 # Use this function to log states of code, helps to find bugs
 def log_normal(str):
